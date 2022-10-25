@@ -1,24 +1,26 @@
 from flask import Blueprint, request
-from db import db
+from init import db
 from models.card import Card, CardSchema
+from models.user import User
 from datetime import date
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 cards_bp = Blueprint('cards', __name__, url_prefix='/cards')
 
 @cards_bp.route('/')
-# @jwt_required()
+@jwt_required()
 def all_cards():
     
-    # user_id = get_jwt_identity()
-    # stmt = db.select(User).filter_by(id=user_id)
-    # user = db.session.scalar(stmt)
-    # if not user.is_admin:
-    #     return {'error':'You must be an admin'}, 401
+    user_id = get_jwt_identity()
+    stmt = db.select(User).filter_by(id=user_id)
+    user = db.session.scalar(stmt)
+    if not user.is_admin:
+        return {'error':'You must be an admin'}, 401
     # select * from cards;
     # stmt = db.select(Card).where(Card.status == 'To Do')
     # stmt = db.select(Card).filter_by(status= 'To Do')
 
-    stmt = db.select(Card).order_by(Card.priority.desc(), Card.title)
+    stmt = db.select(Card).order_by(Card.id.desc(), Card.title)
     cards = db.session.scalars(stmt).all()
     return CardSchema(many=True).dump(cards)
 
