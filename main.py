@@ -3,6 +3,7 @@ from init import db, ma, bcrypt, jwt
 from controllers.cards_controller import cards_bp
 from controllers.auth_controller import auth_bp
 from controllers.cli_controller import db_commands_bp
+from controllers.users_controller import users_bp
 import os
 
 def create_app():
@@ -28,5 +29,6 @@ def create_app():
     app.register_blueprint(cards_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(db_commands_bp)
+    app.register_blueprint(users_bp)
 
     return app
